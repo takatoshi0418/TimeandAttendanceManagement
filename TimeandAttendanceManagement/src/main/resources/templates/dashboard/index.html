@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{_layout/layout}">
+
+<head>
+  <meta charset="UTF-8">
+  <title th:text="#{dashboard.title}"></title>
+</head>
+
+<body>
+  <div layout:fragment="content">
+    <h2 th:text="|#{common.systemName} #{dashboard.title}|"></h2>
+
+    <div th:if="${param.error}">
+      <p th:text="#{error.login.invalid}"></p>
+    </div>
+
+    <form id="clockIn" th:action="@{/attendance/clock-in}" method="post">
+      <button type="submit" th:text="#{dahshboard.button.clockIn}"></button>
+    </form>
+
+    <form id="clockOut" th:action="@{/attendance/clock-out}" method="post">
+      <button type="submit" th:text="#{dashboard.button.clockOut}"></button>
+    </form>
+
+    <form th:action="@{/logout}" method="post">
+      <button type="submit" th:text="#{dashboard.button.logout}"></button>
+    </form>
+  </div>
+</body>
+
+</html>
