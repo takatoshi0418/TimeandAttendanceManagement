@@ -16,3 +16,8 @@
     --bs-danger: #FF5449;
     --bs-danger-rgb: 255, 84, 73;
 } */
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
