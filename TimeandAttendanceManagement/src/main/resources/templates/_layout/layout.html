@@ -8,14 +8,16 @@
     <title th:text="#{login.title}"></title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.8/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/webjars/bootstrap/5.3.8/js/bootstrap.bundle.min.js}" defer></script>
 </head>
 
 <body>
-    <header th:insert="~{_fragments/header :: header}"></header>
+    <header th:replace="~{_fragments/header :: header}"></header>
     <main>
-        <div layout:fragment="content"></div>
+        <div th:replace="~{_fragments/message :: message}"></div>
+        <div layout:fragment="content" class="container mt-3"></div>
     </main>
-    <footer th:insert="~{_fragments/footer :: footer}"></footer>
+    <footer th:replace="~{_fragments/footer :: footer}"></footer>
 </body>
 
 </html>

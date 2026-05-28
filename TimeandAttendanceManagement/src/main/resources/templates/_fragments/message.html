@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<!--/* ヘッダーは layout.html で定義済みのため、ここでは記述しない */-->
+<head></head>
+
+<body>
+    <div th:fragment="message" th:if="${messages}">
+        <div th:each="message : ${messages}"
+            th:classappend="'alert alert-' + ${message.type.cssClass}" role="alert">
+            <span th:text="${message.message}"></span>
+        </div>
+    </div>
+</body>
+
+</html>
