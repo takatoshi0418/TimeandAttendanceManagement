@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <!--/* ヘッダーは layout.html で定義済みのため、ここでは記述しない */-->
+
 <head></head>
 
 <body>
     <header layout:fragment="header">
-        <nav class="header navbar nav-bar-fixed-top">
-            <div>
-                <a>ヘッダー部分</a>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" th:text="#{common.systemName}" href="/dashboard"></a>
             </div>
         </nav>
     </header>

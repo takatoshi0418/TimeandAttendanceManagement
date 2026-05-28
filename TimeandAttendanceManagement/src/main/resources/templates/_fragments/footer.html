@@ -1,13 +1,16 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <!--/* ヘッダーは layout.html で定義済みのため、ここでは記述しない */-->
+
 <head></head>
 
 <body>
     <footer th:fragment="footer">
-        <div>フッター部分</div>
+        <div class="container">
+            <p class="text-center text-muted">&copy; <span th:text="${#dates.year(#dates.createNow())}"></span> <span
+                    th:text="#{common.auther}"></span>. All rights reserved.</p>
+        </div>
     </footer>
 </body>
 
