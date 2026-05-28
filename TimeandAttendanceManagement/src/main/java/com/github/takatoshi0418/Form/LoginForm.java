@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class LoginForm {
 
-    /** 社員場  */
+    /** 社員番号  */
     private String employeeNumber;
 
     /** パスワード  */
