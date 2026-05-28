@@ -35,7 +35,7 @@ public class SecurityConfig {
 
 
                         // ログインページと静的リソースは全てのユーザに許可
-                        .requestMatchers("/login", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/login", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
 
                         // /admin/** は ADMIN ロールを持つユーザのみアクセス可能
                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
