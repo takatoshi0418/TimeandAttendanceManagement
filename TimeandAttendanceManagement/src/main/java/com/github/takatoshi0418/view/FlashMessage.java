@@ -1,4 +1,4 @@
-package com.github.takatoshi0418.dto;
+package com.github.takatoshi0418.view;
 
 import lombok.NonNull;
 
