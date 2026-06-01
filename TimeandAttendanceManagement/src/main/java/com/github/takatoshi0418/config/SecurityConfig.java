@@ -25,31 +25,33 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // h2-consoleを使用するための設定
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
-                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+            // h2-consoleを使用するための設定
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
+            .headers(headers -> headers.frameOptions(frame -> frame.disable()))
 
-                .authorizeHttpRequests((auth) -> auth
-                        // h2-consoleへのアクセスを全てのユーザに許可
-                        .requestMatchers("/h2-console/**").permitAll()
+            .authorizeHttpRequests(auth -> auth
+                    // h2-consoleへのアクセスを全てのユーザに許可
+                    .requestMatchers("/h2-console/**").permitAll()
 
 
-                        // ログインページと静的リソースは全てのユーザに許可
-                        .requestMatchers("/login", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
+                    // ログインページと静的リソースは全てのユーザに許可
+                    .requestMatchers("/login", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
 
-                        // /admin/** は ADMIN ロールを持つユーザのみアクセス可能
-                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                        // その他のリクエストは認証が必要
-                        .anyRequest().authenticated())
-                .formLogin(form -> form
-                        // ログイン画面のURL
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/dashboard", true)
-                        .permitAll())
-                .logout(logout -> logout
-                        .logoutUrl("/logout") // ログアウトURL
-                        .logoutSuccessUrl("/login?logout")
-                        .permitAll());
+                    // /admin/** は ADMIN ロールを持つユーザのみアクセス可能
+                    .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                    // その他のリクエストは認証が必要
+                    .anyRequest().authenticated())
+            .formLogin(form -> form
+                    // ログイン画面のURL
+                    .loginPage("/login")
+                    .defaultSuccessUrl("/dashboard", true)
+                    .permitAll())
+            .logout(logout -> logout
+                    .logoutUrl("/logout") // ログアウトURL
+                    .logoutSuccessUrl("/login?logout")
+                    .permitAll())
+            .sessionManagement(session -> session
+                .invalidSessionUrl("/login"));
         return http.build();
     }
 
