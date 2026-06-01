@@ -21,3 +21,15 @@ footer {
     bottom: 0;
     width: 100%;
 }
+.attendance-area .current-date {
+    font-size: 20px;
+    color: var(--bs-secondary);
+    text-align: center;
+}
+.attendance-btn-wapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+
+}

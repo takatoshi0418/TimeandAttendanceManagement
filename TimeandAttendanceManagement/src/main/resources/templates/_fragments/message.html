@@ -6,7 +6,7 @@
 <head></head>
 
 <body>
-    <div th:fragment="message" th:if="${messages}">
+    <div th:fragment="message" th:if="${messages}" class="mt-1">
         <div th:each="message : ${messages}"
             th:classappend="'alert alert-' + ${message.type.cssClass}" role="alert">
             <span th:text="${message.message}"></span>

@@ -1,33 +1,60 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-    layout:decorate="~{_layout/layout}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{_layout/layout}">
 
-<head>
-  <meta charset="UTF-8">
-  <title th:text="#{dashboard.title}"></title>
-</head>
+<head></head>
 
 <body>
   <div layout:fragment="content">
-    <h2 th:text="|#{common.systemName} #{dashboard.title}|"></h2>
 
-    <div th:if="${param.error}">
-      <p th:text="#{error.login.invalid}"></p>
+    <div class="row">
+      <div id="attendance-area" class="col-md-6 attendance-area">
+        <div class="row">
+          <!-- 現在の日時表示 -->
+          <div id="current-datetime-area" th:data-server-datetime="${dashboardView.formatedServerDatetime()}"></div>
+          <div class="text-center">
+            <span id="current-date" class="current-date"></span>
+          </div>
+          <div class="text-center">
+            <span id="current-time" class="current-time"></span>
+          </div>
+          <div class="col-6">
+            <span th:text="#{dashboard.label.clockInTime} + ' '"></span>
+            <span th:text="${dashboardView.todayAttendance.formatedClockInTime()}"></span>
+          </div>
+          <div class="col-6">
+            <span th:text="#{dashboard.label.clockOutTime} + ' '"></span>
+            <span th:text="${dashboardView.todayAttendance.formatedClockOutTime()}"></span>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class=" col-6 text-center">
+            <form id="clock-in-form" th:action="@{/attendance/clock-in}" method="post">
+              <button id="clock-in-btn" class="btn btn-lg"
+                th:classappend="${dashboardView.todayAttendance.isEnableClockIn() ? 'btn-primary' : 'btn-secondary disabled'}"
+                type="submit">
+                <i class="bi bi-box-arrow-in-right"></i>
+                <span th:text="#{dashboard.button.clockIn}"></span>
+              </button>
+            </form>
+          </div>
+          <div class="col-6 text-center">
+            <form id="clock-out-form" th:action="@{/attendance/clock-out}" method="post">
+              <button id="clock-out-btn" class="btn btn-lg"
+                th:classappend="${dashboardView.todayAttendance.isEnableClockOut() ? 'btn-primary' : 'btn-secondary disabled'}"
+                type="submit">
+                <i class="bi bi-box-arrow-right"></i>
+                <span th:text="#{dashboard.button.clockOut}"></span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <form id="clockIn" th:action="@{/attendance/clock-in}" method="post">
-      <button type="submit" th:text="#{dahshboard.button.clockIn}"></button>
-    </form>
-
-    <form id="clockOut" th:action="@{/attendance/clock-out}" method="post">
-      <button type="submit" th:text="#{dashboard.button.clockOut}"></button>
-    </form>
-
-    <form th:action="@{/logout}" method="post">
-      <button type="submit" th:text="#{dashboard.button.logout}"></button>
-    </form>
   </div>
+  <th:block layout:fragment="script">
+    <script th:src="@{/js/dashboard.js}" defer></script>
+  </th:block>
 </body>
 
 </html>
