@@ -8,6 +8,7 @@
   <div layout:fragment="content">
 
     <div class="row">
+      <!-- 勤怠操作エリア -->
       <div id="attendance-area" class="col-md-6 attendance-area">
         <div class="row">
           <!-- 現在の日時表示 -->
@@ -18,15 +19,18 @@
           <div class="text-center">
             <span id="current-time" class="current-time"></span>
           </div>
+          <!-- 現在の出勤時間 -->
           <div class="col-6">
             <span th:text="#{dashboard.label.clockInTime} + ' '"></span>
             <span th:text="${dashboardView.todayAttendance.formatedClockInTime()}"></span>
           </div>
+          <!-- 現在の退勤時間 -->
           <div class="col-6">
             <span th:text="#{dashboard.label.clockOutTime} + ' '"></span>
             <span th:text="${dashboardView.todayAttendance.formatedClockOutTime()}"></span>
           </div>
         </div>
+        <!-- 出退勤ボタン -->
         <div class="row mt-2">
           <div class=" col-6 text-center">
             <form id="clock-in-form" th:action="@{/attendance/clock-in}" method="post">
