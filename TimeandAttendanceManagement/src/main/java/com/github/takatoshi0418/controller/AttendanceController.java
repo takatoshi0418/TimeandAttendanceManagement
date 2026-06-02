@@ -2,6 +2,8 @@ package com.github.takatoshi0418.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -52,5 +54,11 @@ public class AttendanceController {
         }
         attendanceService.clockOut(loginUser.getUser());
         return "redirect:/dashboard";
+    }
+
+    @GetMapping("/attendance-report")
+    public String attendanceReport(@AuthenticationPrincipal LoginUser loginUser, Model model)
+            throws IllegalAttendanceException {
+        return "attendance/monthlyAttendanceReport";
     }
 }
