@@ -1,4 +1,4 @@
-package com.github.takatoshi0418.service.impl;
+package com.github.takatoshi0418.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
