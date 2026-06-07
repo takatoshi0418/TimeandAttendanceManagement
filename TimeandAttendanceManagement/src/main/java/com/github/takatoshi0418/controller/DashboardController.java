@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import com.github.takatoshi0418.entity.Attendance;
 import com.github.takatoshi0418.security.LoginUser;
-import com.github.takatoshi0418.service.AttendanceService;
+import com.github.takatoshi0418.service.attendance.AttendanceService;
 import com.github.takatoshi0418.view.dashboard.DashboardView;
 import com.github.takatoshi0418.view.dashboard.TodayAttendanceView;
 

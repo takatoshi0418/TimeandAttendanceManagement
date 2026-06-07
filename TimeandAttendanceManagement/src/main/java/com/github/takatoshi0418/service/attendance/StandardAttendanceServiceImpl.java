@@ -1,4 +1,4 @@
-package com.github.takatoshi0418.service.impl;
+package com.github.takatoshi0418.service.attendance;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,7 +16,6 @@ import com.github.takatoshi0418.exception.attendance.AttendanceNotFoundException
 import com.github.takatoshi0418.exception.attendance.IllegalAttendanceException;
 import com.github.takatoshi0418.exception.attendance.MultipleClockInRecordsException;
 import com.github.takatoshi0418.repository.AttendanceRepository;
-import com.github.takatoshi0418.service.AttendanceService;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.github.takatoshi0418.exception.attendance.IllegalAttendanceException;
 import com.github.takatoshi0418.security.LoginUser;
-import com.github.takatoshi0418.service.AttendanceService;
+import com.github.takatoshi0418.service.attendance.AttendanceService;
 
 import lombok.RequiredArgsConstructor;
 

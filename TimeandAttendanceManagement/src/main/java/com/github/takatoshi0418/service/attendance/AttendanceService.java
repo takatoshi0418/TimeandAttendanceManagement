@@ -1,4 +1,4 @@
-package com.github.takatoshi0418.service;
+package com.github.takatoshi0418.service.attendance;
 
 import java.util.Optional;
 
