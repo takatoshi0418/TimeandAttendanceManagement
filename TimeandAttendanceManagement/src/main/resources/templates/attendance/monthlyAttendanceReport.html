@@ -6,17 +6,48 @@
 
 <body>
   <div layout:fragment="content">
-    <div class="container">
+    <div class="container" th:with="view=${monthlyAttendanceView}">
+      <!-- 月を表示 -->
       <div class="row">
         <div class="col text-center">
           <button type="button" class="btn btn-primary btn-link">
             <i class="bi bi-chevron-double-left"></i>
           </button>
-          <span>2026年6月</span>
+          <span th:text="${view.formatedYearMonth()}"></span>
           <button type="button" class="btn btn-primary btn-link">
             <i class="bi bi-chevron-double-right"></i>
           </button>
         </div>
+      </div>
+      <div class="row">
+        <table class="table-sm table-hover attendance-monthly-table">
+          <thead class="bg-secondary table-dark text-center">
+            <tr>
+              <th th:text="#{attendance.label.day}"></th>
+              <th th:text="#{common.clockIn}"></th>
+              <th th:text="#{common.clockOut}"></th>
+              <th class="d-none d-lg-table-cell" th:text="#{common.label.work}"></th>
+              <th th:text="#{attendance.label.overtime}"></th>
+              <th th:text="#{attendance.label.deductedTime}"></th>
+              <th class="d-none d-lg-table-cell" th:text="#{attendance.label.lateNightTime}"></th>
+              <th class="d-none d-lg-table-cell" th:text="#{attendance.label.holidayTime}"></th>
+              <th class="d-none d-lg-table-cell" th:text="#{attendance.label.note}"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:classappend="${daily.GetLayoutClass()}" th:each="daily : ${view.dailyAttendanceViews}">
+              <td class="text-center" th:text="${daily.formatedTargetDay()}"></td>
+              <td class="text-center" th:text="${daily.formatedClockInTime()}"></td>
+              <td class="text-center" th:text="${daily.formatedClockOutTime()}"></td>
+              <td class="d-none d-lg-table-cell text-center" th:text="${daily.formatedWorktime()}"></td>
+              <td class="text-center" th:text="${daily.formatedOvertime()}"></td>
+              <td class="text-center" th:text="${daily.formatedDeductedTime()}"></td>
+              <td class="d-none d-lg-table-cell text-center" th:text="${daily.formatedLateNightTime()}"></td>
+              <td class="d-none d-lg-table-cell text-center" th:text="${daily.formatedHolidayTime()}"></td>
+              <td class="d-none d-lg-table-cell" th:text="${daily.note}"></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

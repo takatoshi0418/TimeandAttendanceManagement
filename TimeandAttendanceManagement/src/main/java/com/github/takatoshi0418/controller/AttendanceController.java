@@ -1,5 +1,7 @@
 package com.github.takatoshi0418.controller;
 
+import java.time.YearMonth;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.github.takatoshi0418.exception.attendance.IllegalAttendanceException;
 import com.github.takatoshi0418.security.LoginUser;
+import com.github.takatoshi0418.service.attendance.AttendancePolicy;
 import com.github.takatoshi0418.service.attendance.AttendanceService;
+import com.github.takatoshi0418.view.attendance.MonthlyAttendanceView;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +30,7 @@ public class AttendanceController {
 
     /**
      * 出勤操作
+     * 
      * @param loginUser ログインユーザ情報
      * @return 勤怠画面にリダイレクト
      * @throws IllegalAttendanceException 不正な勤怠操作が行われた場合
@@ -42,6 +47,7 @@ public class AttendanceController {
 
     /**
      * 退勤操作
+     * 
      * @param loginUser ログインユーザ情報
      * @return 勤怠画面にリダイレクト
      * @throws IllegalAttendanceException 不正な勤怠操作が行われた場合
@@ -59,6 +65,11 @@ public class AttendanceController {
     @GetMapping("/attendance-report")
     public String attendanceReport(@AuthenticationPrincipal LoginUser loginUser, Model model)
             throws IllegalAttendanceException {
+        YearMonth yearMonth = YearMonth.now();
+        AttendancePolicy policy = AttendancePolicy.from();
+        MonthlyAttendanceView monthlyAttendanceView = attendanceService.getMonthlyAttendanceView(loginUser.getUser(),
+                yearMonth, policy);
+        model.addAttribute("monthlyAttendanceView",monthlyAttendanceView);
         return "attendance/monthlyAttendanceReport";
     }
 }

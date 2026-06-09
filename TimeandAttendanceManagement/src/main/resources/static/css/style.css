@@ -31,5 +31,29 @@ footer {
     justify-content: center;
     align-items: center;
     width: 50%;
-
+}
+@media (min-width: 992px) {
+    .attendance-monthly-table {
+        table-layout: fixed;
+        width: 100%;
+    }
+    .attendance-monthly-table th:nth-child(1), .attendance-monthly-table td:nth-child(1),
+    .attendance-monthly-table th:nth-child(2), .attendance-monthly-table td:nth-child(2),
+    .attendance-monthly-table th:nth-child(3), .attendance-monthly-table td:nth-child(3),
+    .attendance-monthly-table th:nth-child(4), .attendance-monthly-table td:nth-child(4),
+    .attendance-monthly-table th:nth-child(5), .attendance-monthly-table td:nth-child(5),
+    .attendance-monthly-table th:nth-child(6), .attendance-monthly-table td:nth-child(6),
+    .attendance-monthly-table th:nth-child(7), .attendance-monthly-table td:nth-child(7),
+    .attendance-monthly-table th:nth-child(8), .attendance-monthly-table td:nth-child(8) {
+        width: 7.5%;
+    }
+    .attendance-monthly-table th:nth-child(9), .attendance-monthly-table td:nth-child(9) {
+        width: 40%;
+    }
+}
+.attendance-monthly-table .saturday {
+    background-color: #cfe2ff;
+}
+.attendance-monthly-table .sunday {
+    background-color: #f8d7da;
 }

@@ -1,5 +1,6 @@
 package com.github.takatoshi0418.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,4 +30,14 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
      * @return 最新の出勤中の勤務記録が存在する場合はOptionalにAttendanceを格納して返し、存在しない場合は空のOptionalを返す
      */
     Optional <Attendance> findTopByUserIdAndClockOutIsNullOrderByClockInDesc(@NonNull Long userId);
+
+    /**
+     * 指定したユーザおよび期間の勤怠記録を取得する
+     * @param userId 勤怠記録をユーザID
+     * @param start 指定した期間の開始日
+     * @param end 指定した期間の終了日
+     * @return 指定した期間の勤怠記録のリスト
+     */
+    List<Attendance> findByUserIdAndClockInBetweenOrderByClockInAsc(@NonNull Long userId, @NonNull LocalDateTime start, @NonNull LocalDateTime end);
+
 }

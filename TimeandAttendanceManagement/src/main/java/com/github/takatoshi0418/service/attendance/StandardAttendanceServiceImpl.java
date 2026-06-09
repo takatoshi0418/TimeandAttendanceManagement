@@ -1,6 +1,11 @@
 package com.github.takatoshi0418.service.attendance;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +21,8 @@ import com.github.takatoshi0418.exception.attendance.AttendanceNotFoundException
 import com.github.takatoshi0418.exception.attendance.IllegalAttendanceException;
 import com.github.takatoshi0418.exception.attendance.MultipleClockInRecordsException;
 import com.github.takatoshi0418.repository.AttendanceRepository;
+import com.github.takatoshi0418.view.attendance.DailyAttendanceView;
+import com.github.takatoshi0418.view.attendance.MonthlyAttendanceView;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -38,13 +45,14 @@ public class StandardAttendanceServiceImpl implements AttendanceService {
 
     /**
      * ユーザの出勤処理を行う
+     * 
      * @param user 出勤するユーザ
      * @throws IllegalAttendanceException 既に出勤記録が存在する場合
      */
     @Override
     @Transactional
-    public void clockIn(@NonNull User user) throws IllegalAttendanceException  {
-        
+    public void clockIn(@NonNull User user) throws IllegalAttendanceException {
+
         List<Attendance> attendances = attendanceRepository.findByUserIdAndClockOutIsNull(user.getId());
         if (attendances.size() > 0) {
             throw new AlreadyClockedInException(user.getId());
@@ -59,6 +67,7 @@ public class StandardAttendanceServiceImpl implements AttendanceService {
 
     /**
      * ユーザの退勤処理を行う
+     * 
      * @param user 退勤するユーザ
      * @throws IllegalAttendanceException 退勤打刻が存在しない場合、または既に退勤している場合
      */
@@ -83,6 +92,7 @@ public class StandardAttendanceServiceImpl implements AttendanceService {
 
     /**
      * ユーザが出勤中かどうかを確認する
+     * 
      * @param user 確認するユーザ
      * @return 出勤中の場合はtrue、それ以外はfalse
      */
@@ -93,10 +103,73 @@ public class StandardAttendanceServiceImpl implements AttendanceService {
 
     /**
      * 最新の出勤情報を取得する
+     * 
      * @param user 取得したいユーザ
      * @return 最新の出勤情報、存在しない場合は空のOptional
      */
     public Optional<Attendance> getLatestAttendance(@NonNull User user) {
         return attendanceRepository.findTopByUserIdAndClockOutIsNullOrderByClockInDesc(user.getId());
+    }
+
+    /**
+     * ユーザの月別勤怠情報を取得する
+     * @param user 月別勤怠を取得したいユーザ
+     * @param targeYearMonth 月別勤怠を取得したい年月
+     * @param policy 勤怠ポリシー
+     * @return ユーザの月別勤怠情報、存在しない場合は空
+     */
+    public MonthlyAttendanceView getMonthlyAttendanceView(User user, YearMonth targeYearMonth,
+            AttendancePolicy policy) {
+        LocalDateTime startDateTime = LocalDateTime.of(targeYearMonth.atDay(1), LocalTime.MIN);
+        LocalDateTime endDateTime = LocalDateTime.of(targeYearMonth.atEndOfMonth(), LocalTime.MAX);
+        List<Attendance> attendances = attendanceRepository.findByUserIdAndClockInBetweenOrderByClockInAsc(user.getId(),
+                startDateTime, endDateTime);
+
+        List<DailyAttendanceView> dailyAttendanceViews = new ArrayList<>();
+        LocalDate currentDate = startDateTime.toLocalDate();
+        LocalDate nextMonthFirstDay = endDateTime.toLocalDate().plusDays(1);
+        while (currentDate.isBefore(nextMonthFirstDay)) {
+            final LocalDate paramedCurrentDate = currentDate;
+            // currentDateの勤務情報を取得して、日別勤怠情報を生成する
+            Optional<Attendance> currentAttendance = attendances.stream()
+                    .filter(attendace -> paramedCurrentDate.equals(attendace.getClockIn().toLocalDate()))
+                    .findFirst();
+            currentAttendance.ifPresentOrElse( attendance -> {
+                dailyAttendanceViews.add(createAttendanceView(paramedCurrentDate,attendance,policy));
+            },() -> {
+                dailyAttendanceViews.add(createAttendanceView(paramedCurrentDate, null, policy));
+            });
+            currentDate = currentDate.plusDays(1);
+        }
+        return MonthlyAttendanceView.from(targeYearMonth, dailyAttendanceViews);
+    }
+
+    private DailyAttendanceView createAttendanceView(LocalDate localDate, Attendance attendance,
+            AttendancePolicy policy) {
+
+        if (attendance == null) {
+            return DailyAttendanceView.from(localDate);
+        }
+        
+        Duration worktimeDuration = Duration.between(attendance.getClockIn(), attendance.getClockOut());
+        // 実労働時間を計算
+        long actualWorktimeMinutes = worktimeDuration.toMinutes();
+        // 実働時間の差分を求めて、時間外と控除時間を計算
+        long diffTimeMinutes = actualWorktimeMinutes - policy.policyWorkTimeRange().getBetweenMinutes();
+        long overtimeMinutes = diffTimeMinutes > 0 ? diffTimeMinutes : 0;
+        long deductedTimeMinutes = diffTimeMinutes < 0 ? Math.abs(diffTimeMinutes) : 0;
+
+        // TODO 深夜労働時間の計算ロジックを考える
+        long lateNightTimeMinutes = 0;
+
+        // TODO 休日労働時間の計算ロジックを考える
+        long holidayTimeMinutes = 0;
+
+        // TODO 備考の生成
+        String note = "";
+
+        return new DailyAttendanceView(localDate, attendance.getClockIn().toLocalTime(),
+                attendance.getClockOut().toLocalTime(), actualWorktimeMinutes, overtimeMinutes, deductedTimeMinutes,
+                lateNightTimeMinutes, holidayTimeMinutes, note);
     }
 }
