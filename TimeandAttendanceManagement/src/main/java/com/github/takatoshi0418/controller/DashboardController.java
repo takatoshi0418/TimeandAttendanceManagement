@@ -34,6 +34,7 @@ public class DashboardController {
             return "redirect:/login";
         }
 
+        // TODO 詰め替え処理をService層に移動
         Attendance attendance = attendanceService.getLatestAttendance(loginUser.getUser()).orElse(null);
         TodayAttendanceView todayAttendanceView = TodayAttendanceView.from(attendance);
         DashboardView dashboardView = new DashboardView(todayAttendanceView);
