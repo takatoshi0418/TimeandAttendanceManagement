@@ -61,6 +61,11 @@ public record TodayAttendanceView(LocalDateTime clockInTime, LocalDateTime clock
         return isClockedOut() ? this.clockOutTime.format(FORMATTER) : EMPTY_TIME_TEXT;
     }
 
+    /**
+     * 勤務エンティティから出勤・退勤情報を作成する
+     * @param attendance 勤務エンティティ
+     * @return 出勤・退勤情報
+     */
     public static TodayAttendanceView from(Attendance attendance) {
         if (attendance == null) {
             return new TodayAttendanceView(null, null);
