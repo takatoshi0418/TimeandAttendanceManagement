@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.github.takatoshi0418.entity.User;
+import com.github.takatoshi0418.model.entity.User;
 import com.github.takatoshi0418.repository.UserRepository;
 import com.github.takatoshi0418.security.LoginUser;
 

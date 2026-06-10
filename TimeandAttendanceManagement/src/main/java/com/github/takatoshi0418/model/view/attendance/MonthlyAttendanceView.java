@@ -1,4 +1,4 @@
-package com.github.takatoshi0418.view.attendance;
+package com.github.takatoshi0418.model.view.attendance;
 
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;

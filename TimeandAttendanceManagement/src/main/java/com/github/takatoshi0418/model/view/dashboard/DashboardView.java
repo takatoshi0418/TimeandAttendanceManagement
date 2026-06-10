@@ -1,4 +1,4 @@
-package com.github.takatoshi0418.view.dashboard;
+package com.github.takatoshi0418.model.view.dashboard;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

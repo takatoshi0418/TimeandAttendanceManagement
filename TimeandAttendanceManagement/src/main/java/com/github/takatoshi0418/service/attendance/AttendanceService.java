@@ -3,10 +3,11 @@ package com.github.takatoshi0418.service.attendance;
 import java.time.YearMonth;
 import java.util.Optional;
 
-import com.github.takatoshi0418.entity.Attendance;
-import com.github.takatoshi0418.entity.User;
 import com.github.takatoshi0418.exception.attendance.IllegalAttendanceException;
-import com.github.takatoshi0418.view.attendance.MonthlyAttendanceView;
+import com.github.takatoshi0418.model.AttendancePolicy;
+import com.github.takatoshi0418.model.entity.Attendance;
+import com.github.takatoshi0418.model.entity.User;
+import com.github.takatoshi0418.model.view.attendance.MonthlyAttendanceView;
 
 /**
  * 出勤・退勤処理を行うサービスインターフェース

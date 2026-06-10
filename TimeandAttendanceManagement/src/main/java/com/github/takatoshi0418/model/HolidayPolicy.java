@@ -1,4 +1,4 @@
-package com.github.takatoshi0418.service.attendance;
+package com.github.takatoshi0418.model;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

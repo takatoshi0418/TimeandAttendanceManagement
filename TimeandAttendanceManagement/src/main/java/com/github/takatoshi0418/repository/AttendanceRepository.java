@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.github.takatoshi0418.entity.Attendance;
+import com.github.takatoshi0418.model.entity.Attendance;
 
 import lombok.NonNull;
 

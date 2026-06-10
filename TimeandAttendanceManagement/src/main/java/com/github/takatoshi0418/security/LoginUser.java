@@ -7,7 +7,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.github.takatoshi0418.entity.User;
+import com.github.takatoshi0418.model.entity.User;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

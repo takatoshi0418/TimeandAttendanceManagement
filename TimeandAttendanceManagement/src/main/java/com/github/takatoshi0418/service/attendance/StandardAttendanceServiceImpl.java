@@ -14,15 +14,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.takatoshi0418.entity.Attendance;
-import com.github.takatoshi0418.entity.User;
 import com.github.takatoshi0418.exception.attendance.AlreadyClockedInException;
 import com.github.takatoshi0418.exception.attendance.AttendanceNotFoundException;
 import com.github.takatoshi0418.exception.attendance.IllegalAttendanceException;
 import com.github.takatoshi0418.exception.attendance.MultipleClockInRecordsException;
+import com.github.takatoshi0418.model.AttendancePolicy;
+import com.github.takatoshi0418.model.entity.Attendance;
+import com.github.takatoshi0418.model.entity.User;
+import com.github.takatoshi0418.model.view.attendance.DailyAttendanceView;
+import com.github.takatoshi0418.model.view.attendance.MonthlyAttendanceView;
 import com.github.takatoshi0418.repository.AttendanceRepository;
-import com.github.takatoshi0418.view.attendance.DailyAttendanceView;
-import com.github.takatoshi0418.view.attendance.MonthlyAttendanceView;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

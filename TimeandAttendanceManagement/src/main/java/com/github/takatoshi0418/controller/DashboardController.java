@@ -5,11 +5,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.github.takatoshi0418.entity.Attendance;
+import com.github.takatoshi0418.model.entity.Attendance;
+import com.github.takatoshi0418.model.view.dashboard.DashboardView;
+import com.github.takatoshi0418.model.view.dashboard.TodayAttendanceView;
 import com.github.takatoshi0418.security.LoginUser;
 import com.github.takatoshi0418.service.attendance.AttendanceService;
-import com.github.takatoshi0418.view.dashboard.DashboardView;
-import com.github.takatoshi0418.view.dashboard.TodayAttendanceView;
 
 import lombok.RequiredArgsConstructor;
 

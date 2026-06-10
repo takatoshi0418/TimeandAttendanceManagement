@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.github.takatoshi0418.exception.attendance.IllegalAttendanceException;
-import com.github.takatoshi0418.view.FlashMessage;
+import com.github.takatoshi0418.model.view.FlashMessage;
 
 import lombok.RequiredArgsConstructor;
 

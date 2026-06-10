@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.github.takatoshi0418.exception.attendance.IllegalAttendanceException;
+import com.github.takatoshi0418.model.AttendancePolicy;
+import com.github.takatoshi0418.model.view.attendance.MonthlyAttendanceView;
 import com.github.takatoshi0418.security.LoginUser;
-import com.github.takatoshi0418.service.attendance.AttendancePolicy;
 import com.github.takatoshi0418.service.attendance.AttendanceService;
-import com.github.takatoshi0418.view.attendance.MonthlyAttendanceView;
 
 import lombok.RequiredArgsConstructor;
 

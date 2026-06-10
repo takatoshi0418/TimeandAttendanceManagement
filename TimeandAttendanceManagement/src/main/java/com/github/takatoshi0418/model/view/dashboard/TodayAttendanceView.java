@@ -1,10 +1,10 @@
-package com.github.takatoshi0418.view.dashboard;
+package com.github.takatoshi0418.model.view.dashboard;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-import com.github.takatoshi0418.entity.Attendance;
+import com.github.takatoshi0418.model.entity.Attendance;
 
 /** 今日の出勤・退勤情報 */
 public record TodayAttendanceView(LocalDateTime clockInTime, LocalDateTime clockOutTime) {

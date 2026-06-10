@@ -1,4 +1,4 @@
-package com.github.takatoshi0418.view;
+package com.github.takatoshi0418.model.view;
 
 import lombok.NonNull;
 

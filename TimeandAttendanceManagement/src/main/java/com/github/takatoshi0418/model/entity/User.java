@@ -1,4 +1,4 @@
-package com.github.takatoshi0418.entity;
+package com.github.takatoshi0418.model.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
 import lombok.Data;
 
 /**
