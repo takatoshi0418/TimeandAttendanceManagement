@@ -23,6 +23,8 @@ import com.github.takatoshi0418.model.entity.Attendance;
 import com.github.takatoshi0418.model.entity.User;
 import com.github.takatoshi0418.model.view.attendance.DailyAttendanceView;
 import com.github.takatoshi0418.model.view.attendance.MonthlyAttendanceView;
+import com.github.takatoshi0418.model.view.dashboard.DashboardView;
+import com.github.takatoshi0418.model.view.dashboard.TodayAttendanceView;
 import com.github.takatoshi0418.repository.AttendanceRepository;
 
 import lombok.NonNull;
@@ -108,8 +110,10 @@ public class StandardAttendanceServiceImpl implements AttendanceService {
      * @param user 取得したいユーザ
      * @return 最新の出勤情報、存在しない場合は空のOptional
      */
-    public Optional<Attendance> getLatestAttendance(@NonNull User user) {
-        return attendanceRepository.findTopByUserIdAndClockOutIsNullOrderByClockInDesc(user.getId());
+    public DashboardView getLatestAttendance(@NonNull User user) {
+        Attendance attendance = attendanceRepository.findTopByUserIdAndClockOutIsNullOrderByClockInDesc(user.getId()).orElse(null);
+        TodayAttendanceView todayAttendanceView = TodayAttendanceView.from(attendance);
+        return new DashboardView(todayAttendanceView);
     }
 
     /**

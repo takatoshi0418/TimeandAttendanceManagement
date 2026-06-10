@@ -1,13 +1,12 @@
 package com.github.takatoshi0418.service.attendance;
 
 import java.time.YearMonth;
-import java.util.Optional;
 
 import com.github.takatoshi0418.exception.attendance.IllegalAttendanceException;
 import com.github.takatoshi0418.model.AttendancePolicy;
-import com.github.takatoshi0418.model.entity.Attendance;
 import com.github.takatoshi0418.model.entity.User;
 import com.github.takatoshi0418.model.view.attendance.MonthlyAttendanceView;
+import com.github.takatoshi0418.model.view.dashboard.DashboardView;
 
 /**
  * 出勤・退勤処理を行うサービスインターフェース
@@ -38,7 +37,7 @@ public interface AttendanceService {
      * @param user 最新の出勤情報を取得したいユーザ
      * @return 最新の出勤情報、存在しない場合は空のOptional
      */
-    Optional<Attendance> getLatestAttendance(User user);
+    DashboardView getLatestAttendance(User user);
 
     /**
      * ユーザの月別勤怠情報を取得する

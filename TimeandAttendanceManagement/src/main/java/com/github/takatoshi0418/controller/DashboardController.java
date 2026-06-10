@@ -5,9 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.github.takatoshi0418.model.entity.Attendance;
 import com.github.takatoshi0418.model.view.dashboard.DashboardView;
-import com.github.takatoshi0418.model.view.dashboard.TodayAttendanceView;
 import com.github.takatoshi0418.security.LoginUser;
 import com.github.takatoshi0418.service.attendance.AttendanceService;
 
@@ -34,10 +32,7 @@ public class DashboardController {
             return "redirect:/login";
         }
 
-        // TODO 詰め替え処理をService層に移動
-        Attendance attendance = attendanceService.getLatestAttendance(loginUser.getUser()).orElse(null);
-        TodayAttendanceView todayAttendanceView = TodayAttendanceView.from(attendance);
-        DashboardView dashboardView = new DashboardView(todayAttendanceView);
+        DashboardView dashboardView = attendanceService.getLatestAttendance(loginUser.getUser());
         model.addAttribute(dashboardView);
         return "dashboard/index";
     }
