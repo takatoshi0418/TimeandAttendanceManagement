@@ -4,7 +4,6 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.Month;
 
-import com.github.takatoshi0418.service.LocalDateTimeRange;
 
 /**
  * 勤怠に関するポリシー
@@ -40,6 +39,10 @@ public record AttendancePolicy(
             new LocalDateTimeRange(
                 LocalTime.of(12,00), 
                 LocalTime.of(13,00)
+            ),
+            new LocalDateTimeRange(
+                LocalTime.of(18,30), 
+                LocalTime.of(19, 0)
             )
         };
         // 休日を取得
