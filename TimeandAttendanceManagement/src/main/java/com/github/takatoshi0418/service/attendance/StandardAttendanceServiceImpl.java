@@ -19,6 +19,7 @@ import com.github.takatoshi0418.exception.attendance.AttendanceNotFoundException
 import com.github.takatoshi0418.exception.attendance.IllegalAttendanceException;
 import com.github.takatoshi0418.exception.attendance.MultipleClockInRecordsException;
 import com.github.takatoshi0418.model.AttendancePolicy;
+import com.github.takatoshi0418.model.LocalDateTimeRange;
 import com.github.takatoshi0418.model.entity.Attendance;
 import com.github.takatoshi0418.model.entity.User;
 import com.github.takatoshi0418.model.view.attendance.DailyAttendanceView;
@@ -111,16 +112,18 @@ public class StandardAttendanceServiceImpl implements AttendanceService {
      * @return 最新の出勤情報、存在しない場合は空のOptional
      */
     public DashboardView getLatestAttendance(@NonNull User user) {
-        Attendance attendance = attendanceRepository.findTopByUserIdAndClockOutIsNullOrderByClockInDesc(user.getId()).orElse(null);
+        Attendance attendance = attendanceRepository.findTopByUserIdAndClockOutIsNullOrderByClockInDesc(user.getId())
+                .orElse(null);
         TodayAttendanceView todayAttendanceView = TodayAttendanceView.from(attendance);
         return new DashboardView(todayAttendanceView);
     }
 
     /**
      * ユーザの月別勤怠情報を取得する
-     * @param user 月別勤怠を取得したいユーザ
+     * 
+     * @param user           月別勤怠を取得したいユーザ
      * @param targeYearMonth 月別勤怠を取得したい年月
-     * @param policy 勤怠ポリシー
+     * @param policy         勤怠ポリシー
      * @return ユーザの月別勤怠情報、存在しない場合は空
      */
     public MonthlyAttendanceView getMonthlyAttendanceView(User user, YearMonth targeYearMonth,
@@ -139,9 +142,9 @@ public class StandardAttendanceServiceImpl implements AttendanceService {
             Optional<Attendance> currentAttendance = attendances.stream()
                     .filter(attendace -> paramedCurrentDate.equals(attendace.getClockIn().toLocalDate()))
                     .findFirst();
-            currentAttendance.ifPresentOrElse( attendance -> {
-                dailyAttendanceViews.add(createAttendanceView(paramedCurrentDate,attendance,policy));
-            },() -> {
+            currentAttendance.ifPresentOrElse(attendance -> {
+                dailyAttendanceViews.add(createAttendanceView(paramedCurrentDate, attendance, policy));
+            }, () -> {
                 dailyAttendanceViews.add(createAttendanceView(paramedCurrentDate, null, policy));
             });
             currentDate = currentDate.plusDays(1);
@@ -155,17 +158,29 @@ public class StandardAttendanceServiceImpl implements AttendanceService {
         if (attendance == null) {
             return DailyAttendanceView.from(localDate);
         }
-        
-        Duration worktimeDuration = Duration.between(attendance.getClockIn(), attendance.getClockOut());
+
+        LocalDateTimeRange worktimeRange = new LocalDateTimeRange(attendance.getClockIn().toLocalTime(),
+                attendance.getClockOut().toLocalTime());
+
         // 実労働時間を計算
-        long actualWorktimeMinutes = worktimeDuration.toMinutes();
+        long actualWorktimeMinutes = worktimeRange.getBetweenMinutes();
         // 実働時間の差分を求めて、時間外と控除時間を計算
         long diffTimeMinutes = actualWorktimeMinutes - policy.policyWorkTimeRange().getBetweenMinutes();
         long overtimeMinutes = diffTimeMinutes > 0 ? diffTimeMinutes : 0;
         long deductedTimeMinutes = diffTimeMinutes < 0 ? Math.abs(diffTimeMinutes) : 0;
 
-        // TODO 深夜労働時間の計算ロジックを考える
-        long lateNightTimeMinutes = 0;
+        // 休憩時間の計算
+        long breakTimeMinutes = 0;
+        LocalDateTimeRange[] breakTimeRanges = policy.breakTimeRanges();
+        for (LocalDateTimeRange breakTimeRange : breakTimeRanges) {
+            if (worktimeRange.isBetween(breakTimeRange.getStartDateTime())) {
+                breakTimeMinutes += overlapTimeMinutes(worktimeRange, breakTimeRange);
+            }
+        }
+        actualWorktimeMinutes -= breakTimeMinutes;
+
+        // 深夜勤務時間を計算する
+        long lateNightTimeMinutes = overlapTimeMinutes(worktimeRange, policy.policyLateNightRange());
 
         // TODO 休日労働時間の計算ロジックを考える
         long holidayTimeMinutes = 0;
@@ -176,5 +191,24 @@ public class StandardAttendanceServiceImpl implements AttendanceService {
         return new DailyAttendanceView(localDate, attendance.getClockIn().toLocalTime(),
                 attendance.getClockOut().toLocalTime(), actualWorktimeMinutes, overtimeMinutes, deductedTimeMinutes,
                 lateNightTimeMinutes, holidayTimeMinutes, note);
+    }
+
+    /**
+     * 2つの時間帯が重複する時間（分）を取得する。
+     * @param datetimeRange1 時間帯1
+     * @param datetimeRange2 時間帯2
+     * @return 時間帯重複する時間（分）
+     */
+    private long overlapTimeMinutes(LocalDateTimeRange datetimeRange1, LocalDateTimeRange datetimeRange2) {
+        LocalDateTime startDateTime = datetimeRange1.getStartDateTime().isBefore(datetimeRange2.getStartDateTime())
+                ? datetimeRange2.getStartDateTime()
+                : datetimeRange1.getStartDateTime();
+        LocalDateTime endDateTime = datetimeRange1.getEndDateTime().isAfter(datetimeRange2.getEndDateTime())
+                ? datetimeRange2.getEndDateTime()
+                : datetimeRange1.getEndDateTime();
+        if (startDateTime.isAfter(endDateTime)) {
+            return 0;
+        }
+        return Duration.between(startDateTime, endDateTime).toMinutes();
     }
 }
