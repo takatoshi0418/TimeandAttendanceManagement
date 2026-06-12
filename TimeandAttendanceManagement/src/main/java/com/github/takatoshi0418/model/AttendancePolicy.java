@@ -1,8 +1,10 @@
 package com.github.takatoshi0418.model;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
+import java.util.Arrays;
 
 
 /**
@@ -55,5 +57,9 @@ public record AttendancePolicy(
             new HolidayPolicy(Month.JANUARY, DayOfWeek.MONDAY, 2)
         };
         return new AttendancePolicy(policyWorkTimeRange, policyLateNightRange, breakTimeRanges, holidayPolicies);
+    }
+
+    public boolean isHoliday(LocalDate targetDate) {
+        return Arrays.stream(holidayPolicies).anyMatch(holidayPolicy -> holidayPolicy.isHoliday(targetDate));
     }
 }
