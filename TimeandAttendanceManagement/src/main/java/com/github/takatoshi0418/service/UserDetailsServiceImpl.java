@@ -2,7 +2,6 @@ package com.github.takatoshi0418.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -11,12 +10,15 @@ import com.github.takatoshi0418.model.entity.User;
 import com.github.takatoshi0418.repository.UserRepository;
 import com.github.takatoshi0418.security.LoginUser;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * UserDetailsServiceImplクラス
  * Spring SecurityのUserDetailsServiceを実装するクラス
  * ユーザの認証情報をデータベースから取得するためのサービスクラス
  */
 @Service
+@RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
@@ -25,8 +27,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      * UserRepositoryを注入
      * ユーザ情報をデータベースから取得するためのリポジトリ
      */
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     /**
      * ユーザの認証情報をデータベースから取得するメソッド
