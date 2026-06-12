@@ -1,5 +1,6 @@
 package com.github.takatoshi0418.service.attendance;
 
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -182,8 +183,14 @@ public class StandardAttendanceServiceImpl implements AttendanceService {
         // 深夜勤務時間を計算する
         long lateNightTimeMinutes = overlapTimeMinutes(worktimeRange, policy.policyLateNightRange());
 
-        // TODO 休日労働時間の計算ロジックを考える
+        // 一旦、法定休日を日曜日に固定
+        // TODO のちのち、法定休日を自動計算できるようにする
         long holidayTimeMinutes = 0;
+        if (DayOfWeek.SUNDAY.equals(localDate.getDayOfWeek())) {
+            LocalDateTime startDateTime = LocalDateTime.of(localDate, LocalTime.MIN);
+            LocalDateTime endDateTime = LocalDateTime.of(localDate, LocalTime.MAX);
+            holidayTimeMinutes += overlapTimeMinutes(worktimeRange, new LocalDateTimeRange(startDateTime, endDateTime));
+        }
 
         // TODO 備考の生成
         String note = "";
