@@ -1,10 +1,12 @@
-package com.github.takatoshi0418.attendance.domain;
+package com.github.takatoshi0418.attendance.domain.policy;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.Arrays;
+
+import com.github.takatoshi0418.attendance.domain.LocalDateTimeRange;
 
 
 /**
@@ -59,6 +61,11 @@ public record AttendancePolicy(
         return new AttendancePolicy(policyWorkTimeRange, policyLateNightRange, breakTimeRanges, holidayPolicies);
     }
 
+    /**
+     * 休日かどうかを判断する
+     * @param targetDate 対象日
+     * @return 休日の場合、True,それ以外の場合はFalse
+     */
     public boolean isHoliday(LocalDate targetDate) {
         return Arrays.stream(holidayPolicies).anyMatch(holidayPolicy -> holidayPolicy.isHoliday(targetDate));
     }

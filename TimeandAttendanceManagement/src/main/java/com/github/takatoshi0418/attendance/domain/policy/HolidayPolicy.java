@@ -1,4 +1,4 @@
-package com.github.takatoshi0418.attendance.domain;
+package com.github.takatoshi0418.attendance.domain.policy;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

@@ -2,7 +2,7 @@ package com.github.takatoshi0418.attendance.service;
 
 import java.time.YearMonth;
 
-import com.github.takatoshi0418.attendance.domain.AttendancePolicy;
+import com.github.takatoshi0418.attendance.domain.policy.AttendancePolicy;
 import com.github.takatoshi0418.attendance.dto.MonthlyAttendanceView;
 import com.github.takatoshi0418.attendance.exception.IllegalAttendanceException;
 import com.github.takatoshi0418.auth.dto.User;

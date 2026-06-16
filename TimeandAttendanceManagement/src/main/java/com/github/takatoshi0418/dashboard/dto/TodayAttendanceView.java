@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-import com.github.takatoshi0418.attendance.domain.Attendance;
+import com.github.takatoshi0418.attendance.domain.entity.Attendance;
 
 /** 今日の出勤・退勤情報 */
 public record TodayAttendanceView(LocalDateTime clockInTime, LocalDateTime clockOutTime) {

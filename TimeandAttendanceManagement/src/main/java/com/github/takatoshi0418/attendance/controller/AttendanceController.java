@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.github.takatoshi0418.attendance.domain.AttendancePolicy;
+import com.github.takatoshi0418.attendance.domain.policy.AttendancePolicy;
 import com.github.takatoshi0418.attendance.dto.MonthlyAttendanceView;
 import com.github.takatoshi0418.attendance.exception.IllegalAttendanceException;
 import com.github.takatoshi0418.attendance.service.AttendanceService;

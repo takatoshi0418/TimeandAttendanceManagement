@@ -154,5 +154,36 @@ public class LocalDateTimeRange {
      */
     public boolean isBetween(LocalTime time) {
         return !time.isBefore(getStartTime()) && !time.isAfter(getEndTime());
-    }    
+    }
+
+    /**
+     * 時間帯が重複する時間（分）を取得する
+     * @param other 別の時間帯
+     * @return 時間帯が重複する時間
+     */
+    public long overlapTimeMinutes(LocalDateTimeRange other) {
+        LocalDateTime start = afterOf(startDateTime, other.startDateTime);
+        LocalDateTime end = beforeOf(endDateTime, other.endDateTime);
+        return Math.max(0, Duration.between(start, end).toMinutes());
+    }
+
+    /**
+     * 2つの日時を比較して、遅いほうを取得する
+     * @param datetime1 1つ目の日時
+     * @param datetime2 2つ目の日時
+     * @return 遅いほうの日時
+     */
+    private LocalDateTime afterOf(LocalDateTime datetime1, LocalDateTime datetime2) {
+        return datetime1.isAfter(datetime2) ? datetime1 : datetime2;
+    }
+
+    /**
+     * 2つの日時を取得して、早いほうを取得する
+     * @param datetime1 1つ目の日時
+     * @param datetime2 2つ目の日時
+     * @return 早いほうの日時
+     */
+    private LocalDateTime beforeOf(LocalDateTime datetime1, LocalDateTime datetime2) {
+        return datetime1.isBefore(datetime2) ? datetime1 : datetime2;
+    }
 }

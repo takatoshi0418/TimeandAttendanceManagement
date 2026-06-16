@@ -1,23 +1,22 @@
 package com.github.takatoshi0418.attendance.service;
 
-import java.time.DayOfWeek;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.takatoshi0418.attendance.domain.Attendance;
-import com.github.takatoshi0418.attendance.domain.AttendancePolicy;
-import com.github.takatoshi0418.attendance.domain.LocalDateTimeRange;
+import com.github.takatoshi0418.attendance.domain.WorkTimeResult;
+import com.github.takatoshi0418.attendance.domain.calculator.StandardAttendanceCalcurator;
+import com.github.takatoshi0418.attendance.domain.entity.Attendance;
+import com.github.takatoshi0418.attendance.domain.policy.AttendancePolicy;
 import com.github.takatoshi0418.attendance.dto.DailyAttendanceView;
 import com.github.takatoshi0418.attendance.dto.MonthlyAttendanceView;
 import com.github.takatoshi0418.attendance.exception.AlreadyClockedInException;
@@ -134,88 +133,17 @@ public class StandardAttendanceServiceImpl implements AttendanceService {
         List<Attendance> attendances = attendanceRepository.findByUserIdAndClockInBetweenOrderByClockInAsc(user.getId(),
                 startDateTime, endDateTime);
 
-        List<DailyAttendanceView> dailyAttendanceViews = new ArrayList<>();
+        // List<DailyAttendanceView> dailyAttendanceViews = new ArrayList<>();
         LocalDate currentDate = startDateTime.toLocalDate();
         LocalDate nextMonthFirstDay = endDateTime.toLocalDate().plusDays(1);
-        while (currentDate.isBefore(nextMonthFirstDay)) {
-            final LocalDate paramedCurrentDate = currentDate;
-            // currentDateの勤務情報を取得して、日別勤怠情報を生成する
-            Optional<Attendance> currentAttendance = attendances.stream()
-                    .filter(attendace -> paramedCurrentDate.equals(attendace.getClockIn().toLocalDate()))
-                    .findFirst();
-            currentAttendance.ifPresentOrElse(attendance -> {
-                dailyAttendanceViews.add(createAttendanceView(paramedCurrentDate, attendance, policy));
-            }, () -> {
-                dailyAttendanceViews.add(createAttendanceView(paramedCurrentDate, null, policy));
-            });
-            currentDate = currentDate.plusDays(1);
-        }
+        Map<LocalDate, Attendance> map = attendances.stream()
+                .collect(Collectors.toMap(attendance -> attendance.getClockIn().toLocalDate(),
+                        attendance -> attendance));
+        List<DailyAttendanceView> dailyAttendanceViews = currentDate.datesUntil(nextMonthFirstDay).map(date -> {
+            Attendance a = map.get(date);
+            WorkTimeResult result = new StandardAttendanceCalcurator().calculate(date, a, policy);
+            return DailyAttendanceView.from(result);
+        }).toList();
         return MonthlyAttendanceView.from(targeYearMonth, dailyAttendanceViews);
-    }
-
-    private DailyAttendanceView createAttendanceView(LocalDate localDate, Attendance attendance,
-            AttendancePolicy policy) {
-
-        if (attendance == null) {
-            return DailyAttendanceView.from(localDate);
-        }
-
-        LocalDateTimeRange worktimeRange = new LocalDateTimeRange(attendance.getClockIn().toLocalTime(),
-                attendance.getClockOut().toLocalTime());
-
-        // 実労働時間を計算
-        long actualWorktimeMinutes = worktimeRange.getBetweenMinutes();
-        // 実働時間の差分を求めて、時間外と控除時間を計算
-        long diffTimeMinutes = actualWorktimeMinutes - policy.policyWorkTimeRange().getBetweenMinutes();
-        long overtimeMinutes = diffTimeMinutes > 0 ? diffTimeMinutes : 0;
-        long deductedTimeMinutes = diffTimeMinutes < 0 ? Math.abs(diffTimeMinutes) : 0;
-
-        // 休憩時間の計算
-        long breakTimeMinutes = 0;
-        LocalDateTimeRange[] breakTimeRanges = policy.breakTimeRanges();
-        for (LocalDateTimeRange breakTimeRange : breakTimeRanges) {
-            if (worktimeRange.isBetween(breakTimeRange.getStartDateTime())) {
-                breakTimeMinutes += overlapTimeMinutes(worktimeRange, breakTimeRange);
-            }
-        }
-        actualWorktimeMinutes -= breakTimeMinutes;
-
-        // 深夜勤務時間を計算する
-        long lateNightTimeMinutes = overlapTimeMinutes(worktimeRange, policy.policyLateNightRange());
-
-        // 一旦、法定休日を日曜日に固定
-        // TODO のちのち、法定休日を自動計算できるようにする
-        long holidayTimeMinutes = 0;
-        if (DayOfWeek.SUNDAY.equals(localDate.getDayOfWeek())) {
-            LocalDateTime startDateTime = LocalDateTime.of(localDate, LocalTime.MIN);
-            LocalDateTime endDateTime = LocalDateTime.of(localDate, LocalTime.MAX);
-            holidayTimeMinutes += overlapTimeMinutes(worktimeRange, new LocalDateTimeRange(startDateTime, endDateTime));
-        }
-
-        // TODO 備考の生成
-        String note = "";
-
-        return new DailyAttendanceView(localDate, attendance.getClockIn().toLocalTime(),
-                attendance.getClockOut().toLocalTime(), actualWorktimeMinutes, overtimeMinutes, deductedTimeMinutes,
-                lateNightTimeMinutes, holidayTimeMinutes, note);
-    }
-
-    /**
-     * 2つの時間帯が重複する時間（分）を取得する。
-     * @param datetimeRange1 時間帯1
-     * @param datetimeRange2 時間帯2
-     * @return 時間帯重複する時間（分）
-     */
-    private long overlapTimeMinutes(LocalDateTimeRange datetimeRange1, LocalDateTimeRange datetimeRange2) {
-        LocalDateTime startDateTime = datetimeRange1.getStartDateTime().isBefore(datetimeRange2.getStartDateTime())
-                ? datetimeRange2.getStartDateTime()
-                : datetimeRange1.getStartDateTime();
-        LocalDateTime endDateTime = datetimeRange1.getEndDateTime().isAfter(datetimeRange2.getEndDateTime())
-                ? datetimeRange2.getEndDateTime()
-                : datetimeRange1.getEndDateTime();
-        if (startDateTime.isAfter(endDateTime)) {
-            return 0;
-        }
-        return Duration.between(startDateTime, endDateTime).toMinutes();
     }
 }

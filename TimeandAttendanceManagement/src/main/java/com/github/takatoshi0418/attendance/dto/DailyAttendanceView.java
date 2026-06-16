@@ -6,6 +6,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+import com.github.takatoshi0418.attendance.domain.WorkTimeResult;
+
 /**
  * 1日分の勤務状況を表示するクラス
  */
@@ -22,15 +24,16 @@ public record DailyAttendanceView(
 
     /**
      * 1日分の勤務を作成する
-     * @param targetDate 対象日
-     * @param clockInTime 出勤時間
-     * @param clockOutTime 退勤時間
-     * @param worktimeMinutes 1日の勤務時間
-     * @param overtimeMinutes 時間外時間
-     * @param deductedTimeMinutes 控除時間
+     * 
+     * @param targetDate           対象日
+     * @param clockInTime          出勤時間
+     * @param clockOutTime         退勤時間
+     * @param worktimeMinutes      1日の勤務時間
+     * @param overtimeMinutes      時間外時間
+     * @param deductedTimeMinutes  控除時間
      * @param lateNightTimeMinutes 深夜勤務時間
-     * @param holidayTimeMinutes 休日勤務時間
-     * @param note 備考
+     * @param holidayTimeMinutes   休日勤務時間
+     * @param note                 備考
      * @return 1日分の勤務
      */
     public static DailyAttendanceView from(LocalDate targetDate, LocalTime clockInTime, LocalTime clockOutTime,
@@ -42,6 +45,18 @@ public record DailyAttendanceView(
 
     /**
      * 1日分の勤務を作成する
+     * @param result 勤怠計算結果
+     * @return 1日分の勤怠
+     */
+    public static DailyAttendanceView from(WorkTimeResult result) {
+        return new DailyAttendanceView(result.targetDate(), result.clockInTime(), result.clockOutTime(),
+                result.workTimeMinutes(), result.overtimeMinutes(), result.deductedTimeMinutes(),
+                result.lateNightTimeMinutes(), result.holidayTimeMinutes(), "");
+    }
+
+    /**
+     * 1日分の勤務を作成する
+     * 
      * @param targetDate 対象日
      * @return 1日分の勤務
      */
@@ -52,6 +67,7 @@ public record DailyAttendanceView(
 
     /**
      * フォーマットされた対象日
+     * 
      * @return フォーマットされた対象日
      */
     public String formatedTargetDay() {
@@ -60,6 +76,7 @@ public record DailyAttendanceView(
 
     /**
      * フォーマットされた出勤時間
+     * 
      * @return フォーマットされた出勤時間
      */
     public String formatedClockInTime() {
@@ -71,6 +88,7 @@ public record DailyAttendanceView(
 
     /**
      * フォーマットされた退勤時間
+     * 
      * @return フォーマットされた退勤時間
      */
     public String formatedClockOutTime() {
@@ -82,6 +100,7 @@ public record DailyAttendanceView(
 
     /**
      * フォーマットされた1日の勤務時間
+     * 
      * @return フォーマットされた1日の勤務時間
      */
     public String formatedWorktime() {
@@ -92,6 +111,7 @@ public record DailyAttendanceView(
 
     /**
      * フォーマットされた時間外時間
+     * 
      * @return フォーマットされた時間外時間
      */
     public String formatedOvertime() {
@@ -102,6 +122,7 @@ public record DailyAttendanceView(
 
     /**
      * フォーマットされた控除時間
+     * 
      * @return フォーマットされた控除時間
      */
     public String formatedDeductedTime() {
@@ -112,6 +133,7 @@ public record DailyAttendanceView(
 
     /**
      * フォーマットされた深夜勤務時間
+     * 
      * @return フォーマットされた深夜勤務時間
      */
     public String formatedLateNightTime() {
@@ -122,6 +144,7 @@ public record DailyAttendanceView(
 
     /**
      * フォーマットされた休日勤務時間
+     * 
      * @return フォーマットされた休日勤務時間
      */
     public String formatedHolidayTime() {
@@ -132,6 +155,7 @@ public record DailyAttendanceView(
 
     /**
      * レイアウトクラスを取得する
+     * 
      * @return レイアウトクラス
      */
     public String GetLayoutClass() {
@@ -145,6 +169,7 @@ public record DailyAttendanceView(
 
     /**
      * 時分のフォーマッターを取得する
+     * 
      * @return 時分のフォーマッター
      */
     private DateTimeFormatter getClockFormat() {
