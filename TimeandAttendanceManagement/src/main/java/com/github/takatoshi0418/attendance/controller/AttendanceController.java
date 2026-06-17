@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.github.takatoshi0418.attendance.domain.policy.AttendancePolicy;
 import com.github.takatoshi0418.attendance.dto.MonthlyAttendanceView;
@@ -63,13 +64,17 @@ public class AttendanceController {
     }
 
     @GetMapping("/attendance-report")
-    public String attendanceReport(@AuthenticationPrincipal LoginUser loginUser, Model model)
+    public String attendanceReport(@AuthenticationPrincipal LoginUser loginUser,
+            @RequestParam(name = "year", required = false) Integer year,
+            @RequestParam(name = "month", required = false) Integer month,
+            Model model)
             throws IllegalAttendanceException {
-        YearMonth yearMonth = YearMonth.now();
+
+        YearMonth yearMonth = (year != null && month != null) ? YearMonth.of(year, month) : YearMonth.now();
         AttendancePolicy policy = AttendancePolicy.from();
         MonthlyAttendanceView monthlyAttendanceView = attendanceService.getMonthlyAttendanceView(loginUser.getUser(),
                 yearMonth, policy);
-        model.addAttribute("monthlyAttendanceView",monthlyAttendanceView);
+        model.addAttribute("monthlyAttendanceView", monthlyAttendanceView);
         return "attendance/monthlyAttendanceReport";
     }
 }

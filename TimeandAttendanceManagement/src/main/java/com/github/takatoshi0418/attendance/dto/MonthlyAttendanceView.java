@@ -31,4 +31,20 @@ public record MonthlyAttendanceView(
     public String formatedYearMonth() {
         return targetYearMonth.format(DateTimeFormatter.ofPattern("yyyy年M月", Locale.JAPAN));
     }
+
+    /**
+     * 前月を取得する
+     * @return 前月
+     */
+    public YearMonth getPreviousMonth() {
+        return this.targetYearMonth.minusMonths(1);
+    }
+
+    /**
+     * 次月を取得する
+     * @return 次月
+     */
+    public YearMonth getNextMonth() {
+        return this.targetYearMonth.plusMonths(1);
+    }
 }
