@@ -11,10 +11,11 @@ import java.util.Locale;
 public record MonthlyAttendanceView(
         YearMonth targetYearMonth,
         DailyAttendanceView[] dailyAttendanceViews) {
-    
+
     /**
      * 1か月分の勤務状況を作成する
-     * @param targetYearMonth 対象月
+     * 
+     * @param targetYearMonth      対象月
      * @param dailyAttendanceViews 対象月分の1日分の勤務状況の配列
      * @return 1か月分の勤務状況
      */
@@ -26,6 +27,7 @@ public record MonthlyAttendanceView(
 
     /**
      * フォーマットされた対象月を取得する
+     * 
      * @return フォーマットされた対象月
      */
     public String formatedYearMonth() {
@@ -36,15 +38,26 @@ public record MonthlyAttendanceView(
      * 前月を取得する
      * @return 前月
      */
-    public YearMonth getPreviousMonth() {
-        return this.targetYearMonth.minusMonths(1);
+    public String getRequestParamPrevMonth() {
+        return createRequestParm(this.targetYearMonth.minusMonths(1));
     }
 
     /**
      * 次月を取得する
+     * 
      * @return 次月
      */
-    public YearMonth getNextMonth() {
-        return this.targetYearMonth.plusMonths(1);
+    public String getRequestParamNextMonth() {
+        return createRequestParm(this.targetYearMonth.plusMonths(1));
+    }
+
+    /**
+     * 対象月からリクエストパラメータを作成する
+     * @param targetMonth 対象月
+     * @return リクエストパラメータ
+     */
+    private String createRequestParm(YearMonth targetMonth) {
+        return new StringBuilder("year=").append(targetMonth.getYear()).append("&").append("month=")
+                .append(targetMonth.getMonthValue()).toString();
     }
 }
