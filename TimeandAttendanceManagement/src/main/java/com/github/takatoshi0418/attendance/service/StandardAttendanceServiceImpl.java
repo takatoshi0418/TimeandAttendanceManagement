@@ -21,6 +21,7 @@ import com.github.takatoshi0418.attendance.dto.DailyAttendanceView;
 import com.github.takatoshi0418.attendance.dto.MonthlyAttendanceView;
 import com.github.takatoshi0418.attendance.exception.AlreadyClockedInException;
 import com.github.takatoshi0418.attendance.exception.AttendanceNotFoundException;
+import com.github.takatoshi0418.attendance.exception.ClockingDuplicateException;
 import com.github.takatoshi0418.attendance.exception.IllegalAttendanceException;
 import com.github.takatoshi0418.attendance.exception.MultipleClockInRecordsException;
 import com.github.takatoshi0418.attendance.repository.AttendanceRepository;
@@ -57,13 +58,16 @@ public class StandardAttendanceServiceImpl implements AttendanceService {
     @Transactional
     public void clockIn(@NonNull User user) throws IllegalAttendanceException {
 
-        List<Attendance> attendances = attendanceRepository.findByUserIdAndClockOutIsNull(user.getId());
-        if (attendances.size() > 0) {
+        LocalDateTime now = LocalDateTime.now();
+        if (isExistsDuplicateDate(user.getId(), now)) {
+            throw new ClockingDuplicateException(user.getId());
+        }
+        if (isExistsClockOutAttendance(user.getId())) {
             throw new AlreadyClockedInException(user.getId());
         }
         Attendance attendance = new Attendance();
         attendance.setUser(user);
-        attendance.setClockIn(LocalDateTime.now());
+        attendance.setClockIn(now);
         attendanceRepository.save(attendance);
 
         logger.info("{}さんが出勤しました。", user.getFullName());
@@ -145,5 +149,28 @@ public class StandardAttendanceServiceImpl implements AttendanceService {
             return DailyAttendanceView.from(result);
         }).toList();
         return MonthlyAttendanceView.from(targeYearMonth, dailyAttendanceViews);
+    }
+
+    /**
+     * 未退勤の出勤データが存在するか
+     * @param userId 対象のユーザID
+     * @return 未退勤の出勤データが存在する場合、True　それ以外の場合、false
+     */
+    private boolean isExistsClockOutAttendance(Long userId) {
+        List<Attendance> attendances = attendanceRepository.findByUserIdAndClockOutIsNull(userId);
+        return attendances.size() > 0;
+    }
+
+    /**
+     * 同じ日に出勤データが存在するか
+     * @param userId 対象のユーザID
+     * @param now 対象日
+     * @return 同じ日に出勤データが存在する場合、True　それ以外の場合、False
+     */
+    private boolean isExistsDuplicateDate(Long userId, LocalDateTime now) {
+        LocalDateTime start = LocalDateTime.of(now.toLocalDate(), LocalTime.MIN);
+        LocalDateTime end = LocalDateTime.of(now.toLocalDate(), LocalTime.MAX);
+        List<Attendance> attendances = attendanceRepository.findByUserIdAndClockInBetweenOrderByClockInAsc(userId, start, end);
+        return attendances.size() > 0;
     }
 }
