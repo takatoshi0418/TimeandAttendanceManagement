@@ -60,7 +60,7 @@ public class StandardAttendanceServiceImpl implements AttendanceService {
 
         LocalDateTime now = LocalDateTime.now();
         if (isExistsDuplicateDate(user.getId(), now)) {
-            throw new ClockingDuplicateException(user.getId());
+            throw new ClockingDuplicateException(user.getId(), now.toLocalDate());
         }
         if (isExistsClockOutAttendance(user.getId())) {
             throw new AlreadyClockedInException(user.getId());
